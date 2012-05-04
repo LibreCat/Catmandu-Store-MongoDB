@@ -157,7 +157,7 @@ sub delete_all {
 
 =head1 SEE ALSO
 
-L<Catmandu::Bag>, L<Catmandu::Searchable>, L<DBI>
+L<Catmandu::Bag>, L<Catmandu::Searchable>
 
 =head1 AUTHOR
 
