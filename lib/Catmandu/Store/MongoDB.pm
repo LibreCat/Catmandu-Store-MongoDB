@@ -12,11 +12,11 @@ Catmandu::Store::MongoDB - A Catmandu::Store plugin for MongoDB databases
 
 =head1 VERSION
 
-Version 0.1
+Version 0.01
 
 =cut
 
-our $VERSION = '0.1';
+our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
@@ -34,7 +34,7 @@ our $VERSION = '0.1';
     my $obj3 = $store->bag->get('test123');
 
     $store->bag->delete('test123');
-    
+
     $store->bag->delete_all;
 
     # All bags are iterators
