@@ -12,11 +12,11 @@ Catmandu::Store::MongoDB - A Catmandu::Store plugin for MongoDB databases
 
 =head1 VERSION
 
-Version 0.01
+Version 0.0101
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.0101';
 
 =head1 SYNOPSIS
 
@@ -142,17 +142,17 @@ sub get {
 
 sub add {
     my ($self, $data) = @_;
-    $self->collection->save($data);
+    $self->collection->save($data, {safe => 1});
 }
 
 sub delete {
     my ($self, $id) = @_;
-    $self->collection->remove({_id => $id});
+    $self->collection->remove({_id => $id}, {safe => 1});
 }
 
 sub delete_all {
     my ($self) = @_;
-    $self->collection->remove({});
+    $self->collection->remove({}, {safe => 1});
 }
 
 =head1 SEE ALSO
