@@ -140,6 +140,50 @@ sub get {
     $self->collection->find_one({_id => $id});
 }
 
+=head1 getByFieldValue($fieldname, $value)
+
+Takes a $fieldname and a $value as parameters.
+Outputs a list of all records that have $value in the field called $fieldname.
+
+"->all" instructs the returned MongoDB::Cursor object to output all content into an array.
+This skips the need for Cursor handling but also takes away the possibility of pagination.
+
+=cut
+
+sub getByFieldValue {
+    my ($self, $fieldname, $value) = @_;
+    $self->collection->find({$fieldname => $value})->all;
+}
+
+=head1 getAll()
+
+Takes no parameters, returns a list of all records in the DB.
+
+"->all" instructs the returned MongoDB::Cursor object to output all content into an array.
+This skips the need for Cursor handling but also takes away the possibility of pagination.
+
+=cut
+
+sub getAll {
+    my $self = shift;
+    $self->collection->find->all;
+}
+
+=head1 selectField($fieldname)
+
+Takes a $fieldname as parameter, returns a list of all records but each reduced to the chosen field.
+This method will always return the _id field. If $fieldname differs from _id, the output for each record will be the field _id and the field $fieldname.
+
+"->all" instructs the returned MongoDB::Cursor object to output all content into an array.
+This skips the need for Cursor handling but also takes away the possibility of pagination.
+
+=cut
+
+sub selectField {
+    my ($self, $fieldname) = @_;
+    $self->collection->find->fields({$fieldname => 1})->all;
+}
+
 sub add {
     my ($self, $data) = @_;
     $self->collection->save($data, {safe => 1});
