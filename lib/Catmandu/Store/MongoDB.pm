@@ -97,6 +97,7 @@ sub BUILD {
 package Catmandu::Store::MongoDB::Bag;
 
 use Catmandu::Sane;
+use Catmandu::Util qw(:is);
 use Moo;
 
 with 'Catmandu::Bag';
@@ -116,8 +117,14 @@ sub generator {
     my ($self) = @_;
     sub {
         state $cursor = $self->collection->find;
-        $cursor->next || return;
+        $cursor->next;
     };
+}
+
+sub to_array {
+    my ($self) = @_;
+    my @all = $self->collection->find->all;
+    \@all;
 }
 
 sub each {
@@ -133,6 +140,46 @@ sub each {
 
 sub count {
     $_[0]->collection->count;
+}
+
+around detect => sub {
+    my ($orig, $self, $arg1, $arg2) = @_;
+    if (is_string($arg1)
+            && (is_value($arg2) || is_regex_ref($arg2))) {
+        return $self->collection->find_one({$arg1 => $arg2});
+    }
+    $self->$orig($arg1, $arg2);
+};
+
+around select => sub {
+    my ($orig, $self, $arg1, $arg2) = @_;
+    if (is_string($arg1)
+            && (is_value($arg2) || is_regex_ref($arg2))) {
+        return Catmandu::Iterator->new(sub { sub {
+            state $cursor = $self->collection->find({$arg1 => $arg2});
+            $cursor->next;
+        }});
+    }
+    $self->$orig($arg1, $arg2);
+};
+
+around reject => sub {
+    my ($orig, $self, $arg1, $arg2) = @_;
+    if (is_string($arg1) && is_value($arg2)) {
+        return Catmandu::Iterator->new(sub { sub {
+            state $cursor = $self->collection->find({$arg1 => {'$ne' => $arg2}});
+            $cursor->next;
+        }});
+    }
+    $self->$orig($arg1, $arg2);
+};
+
+sub pluck {
+    my ($self, $key) = @_;
+    Catmandu::Iterator->new(sub { sub {
+        state $cursor = $self->collection->find->fields({$key => 1});
+        ($cursor->next || return)->{$key};
+    }});
 }
 
 sub get {
