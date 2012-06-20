@@ -140,6 +140,12 @@ sub get {
     $self->collection->find_one({_id => $id});
 }
 
+sub to_array {
+    my ($self) = @_;
+    my @all = $self->collection->find->all;
+    \@all;
+}
+
 sub add {
     my ($self, $data) = @_;
     $self->collection->save($data, {safe => 1});
