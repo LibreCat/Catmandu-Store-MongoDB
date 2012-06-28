@@ -142,34 +142,64 @@ sub count {
     $_[0]->collection->count;
 }
 
+# efficiently handle:
+# $bag->detect('foo' => 'bar')
+# $bag->detect('foo' => /bar/)
+# $bag->detect('foo' => ['bar', 'baz'])
 around detect => sub {
     my ($orig, $self, $arg1, $arg2) = @_;
-    if (is_string($arg1)
-            && (is_value($arg2) || is_regex_ref($arg2))) {
-        return $self->collection->find_one({$arg1 => $arg2});
+    if (is_string($arg1)) {
+        if (is_value($arg2) || is_regex_ref($arg2)) {
+            return $self->collection->find_one({$arg1 => $arg2});
+        }
+        if (is_array_ref($arg2)) {
+            return $self->collection->find_one({$arg1 => {'$in' => $arg2}});
+        }
     }
     $self->$orig($arg1, $arg2);
 };
 
+# efficiently handle:
+# $bag->select('foo' => 'bar')
+# $bag->select('foo' => /bar/)
+# $bag->select('foo' => ['bar', 'baz'])
 around select => sub {
     my ($orig, $self, $arg1, $arg2) = @_;
-    if (is_string($arg1)
-            && (is_value($arg2) || is_regex_ref($arg2))) {
-        return Catmandu::Iterator->new(sub { sub {
-            state $cursor = $self->collection->find({$arg1 => $arg2});
-            $cursor->next;
-        }});
+    if (is_string($arg1)) {
+        if (is_value($arg2) || is_regex_ref($arg2)) {
+            return Catmandu::Iterator->new(sub { sub {
+                state $cursor = $self->collection->find({$arg1 => $arg2});
+                $cursor->next;
+            }});
+        }
+        if (is_array_ref($arg2)) {
+            return Catmandu::Iterator->new(sub { sub {
+                state $cursor = $self->collection->find({$arg1 => {'$in' => $arg2}});
+                $cursor->next;
+            }});
+        }
     }
     $self->$orig($arg1, $arg2);
 };
 
+# efficiently handle:
+# $bag->reject('foo' => 'bar')
+# $bag->reject('foo' => ['bar', 'baz'])
 around reject => sub {
     my ($orig, $self, $arg1, $arg2) = @_;
-    if (is_string($arg1) && is_value($arg2)) {
-        return Catmandu::Iterator->new(sub { sub {
-            state $cursor = $self->collection->find({$arg1 => {'$ne' => $arg2}});
-            $cursor->next;
-        }});
+    if (is_string($arg1)) {
+        if (is_value($arg2)) {
+            return Catmandu::Iterator->new(sub { sub {
+                state $cursor = $self->collection->find({$arg1 => {'$ne' => $arg2}});
+                $cursor->next;
+            }});
+        }
+        if (is_array_ref($arg2)) {
+            return Catmandu::Iterator->new(sub { sub {
+                state $cursor = $self->collection->find({$arg1 => {'$nin' => $arg2}});
+                $cursor->next;
+            }});
+        }
     }
     $self->$orig($arg1, $arg2);
 };
