@@ -1,5 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
+0.0201  2013-02-07
+  - fix manifest
+
 0.02    2013-02-07
   - many optimized versions of the Iterable methods
   - basic search support (no CQL support, no Searcher)
