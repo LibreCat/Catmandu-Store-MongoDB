@@ -13,11 +13,11 @@ Catmandu::Store::MongoDB - A Catmandu::Store plugin for MongoDB databases
 
 =head1 VERSION
 
-Version 0.0201
+Version 0.0202
 
 =cut
 
-our $VERSION = '0.0201';
+our $VERSION = '0.0202';
 
 =head1 SYNOPSIS
 
