@@ -2,10 +2,11 @@ package Catmandu::Store::MongoDB::Bag;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is);
-use Moo;
+use Carp qw(confess);
 use Catmandu::Store::MongoDB::Searcher;
 use Catmandu::Hits;
 use JSON qw(decode_json);
+use Moo;
 
 with 'Catmandu::Bag';
 with 'Catmandu::Searchable';

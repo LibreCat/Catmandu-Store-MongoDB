@@ -2,6 +2,7 @@ package Catmandu::Store::MongoDB::Searcher;
 # TODO make a common Searcher role in Catmandu
 
 use Catmandu::Sane;
+use Carp qw(confess);
 use Moo;
 
 with 'Catmandu::Iterable';
