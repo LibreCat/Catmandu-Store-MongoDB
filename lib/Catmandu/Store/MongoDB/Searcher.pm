@@ -14,13 +14,20 @@ has limit => (is => 'ro', required => 1);
 has total => (is => 'ro');
 has sort  => (is => 'ro');
 
-# look at search, generator methods of bag
 sub generator {
     my ($self) = @_;
-    confess "Not Implemented";
+    sub {
+        state $cursor = do {
+            my $c = $self->bag->collection->find($self->query);
+            # limit is unused because the perl driver doesn't expose batchSize
+            $c->limit($self->total) if defined $self->total;
+            $c->sort($self->sort) if defined $self->sort;
+            $c;
+        };
+        $cursor->next;
+    };
 }
 
-# copied from ElasticSearch implementation
 sub slice { # TODO constrain total?
     my ($self, $start, $total) = @_;
     $start //= 0;
@@ -34,10 +41,10 @@ sub slice { # TODO constrain total?
     );
 }
 
-# optimized version of Iterable search
-# look at search method of bag
-sub count {
-    confess "Not Implemented";
+
+sub count { # TODO constrain on start, total?
+    my ($self) = @_;
+    $self->bag->collection->count($self->query);
 }
 
 1;

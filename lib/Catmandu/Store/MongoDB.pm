@@ -9,15 +9,15 @@ with 'Catmandu::Store';
 
 =head1 NAME
 
-Catmandu::Store::MongoDB - A Catmandu::Store plugin for MongoDB databases
+Catmandu::Store::MongoDB - A searchable sotre backed by MongoDB
 
 =head1 VERSION
 
-Version 0.0202
+Version 0.03
 
 =cut
 
-our $VERSION = '0.0202';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -42,6 +42,11 @@ our $VERSION = '0.0202';
     $store->bag->each(sub { ... });
     $store->bag->take(10)->each(sub { ... });
 
+    # Search
+    my $hits = $store->bag->search(query => '{"name":"Patrick"}');
+    my $hits = $store->bag->search(query => {name => "Patrick"});
+    my $iterator = $store->bag->searcher(query => {name => "Patrick"});
+
 =head1 DESCRIPTION
 
 A Catmandu::Store::MongoDB is a Perl package that can store data into
@@ -60,10 +65,11 @@ Create or retieve a bag with name $name. Returns a Catmandu::Bag.
 
 =cut
 
-my $CONNECTION_ARGS = [qw(
+my $CLIENT_ARGS = [qw(
     host
     w
     wtimeout
+    j
     auto_reconnect
     auto_connect
     timeout
@@ -73,24 +79,27 @@ my $CONNECTION_ARGS = [qw(
     query_timeout
     max_bson_size
     find_master
+    ssl
+    dt_type
+    inflate_dbrefs
 )];
 
-has connection    => (is => 'ro', lazy => 1, builder => '_build_connection');
+has client        => (is => 'ro', lazy => 1, builder => '_build_client');
 has database_name => (is => 'ro', required => 1);
 has database      => (is => 'ro', lazy => 1, builder => '_build_database');
 
-sub _build_connection {
-    MongoDB::Connection->new(delete $_[0]->{_args});
+sub _build_client {
+    MongoDB::MongoClient->new(delete $_[0]->{_args});
 }
 
 sub _build_database {
-    my $self = $_[0]; $self->connection->get_database($self->database_name);
+    my $self = $_[0]; $self->client->get_database($self->database_name);
 }
 
 sub BUILD {
     my ($self, $args) = @_;
     $self->{_args} = {};
-    for my $key (@$CONNECTION_ARGS) {
+    for my $key (@$CLIENT_ARGS) {
         $self->{_args}{$key} = $args->{$key} if exists $args->{$key};
     }
 }
