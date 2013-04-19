@@ -15,10 +15,10 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
-        'perl' => '5.10.0',
+        'perl' => '5.10.1',
         'Catmandu' => '0.01',
-        'MongoDB' => '0.42',
-        'Moo' => '0.009011',
+        'MongoDB' => '0.503.3',
+        'Moo' => '1.000008',
     },
     add_to_cleanup => [qw(
         Catmandu-Store-MongoDB-*

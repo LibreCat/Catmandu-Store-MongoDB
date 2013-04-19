@@ -1,5 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
+0.03    2013-04-19
+  - Searcher support
+
 0.0202  2013-02-26
   - import confess
 

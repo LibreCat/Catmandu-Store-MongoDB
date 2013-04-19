@@ -4,12 +4,12 @@ use strict;
 use warnings;
 use Test::More;
 
-my $pkg;
-BEGIN {
-    $pkg = 'Catmandu::Store::MongoDB';
-    use_ok $pkg;
-}
+my @pkgs = qw(
+    Catmandu::Store::MongoDB
+    Catmandu::Store::MongoDB::Bag
+    Catmandu::Store::MongoDB::Searcher
+);
 
-require_ok $pkg;
+require_ok $_ for @pkgs;
 
-done_testing 2;
+done_testing 3;

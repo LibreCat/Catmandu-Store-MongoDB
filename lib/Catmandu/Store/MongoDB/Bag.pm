@@ -143,7 +143,8 @@ sub delete_all {
 }
 
 sub delete_by_query {
-    confess "Not Implemented";
+    my ($self, $query) = @_;
+    $self->collection->remove($query, {safe => 1});
 }
 
 sub search {
@@ -180,7 +181,6 @@ sub searcher {
     Catmandu::Store::MongoDB::Searcher->new(%args, bag => $self);
 }
 
-# TODO Catmandu should have distinct Searchable and CQLSearchable
 sub translate_sru_sortkeys {
     confess "Not Implemented";
 }
