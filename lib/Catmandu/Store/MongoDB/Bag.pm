@@ -143,8 +143,8 @@ sub delete_all {
 }
 
 sub delete_by_query {
-    my ($self, $query) = @_;
-    $self->collection->remove($query, {safe => 1});
+    my ($self, %args) = @_;
+    $self->collection->remove($args{query}, {safe => 1});
 }
 
 sub search {
