@@ -1,5 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
+0.0301  2013-04-22
+  - fix Bag delete_by_query
+
 0.03    2013-04-19
   - Searcher support
 
