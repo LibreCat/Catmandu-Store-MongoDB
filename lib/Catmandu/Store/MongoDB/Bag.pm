@@ -147,6 +147,10 @@ sub delete_by_query {
     $self->collection->remove($args{query}, {safe => 1});
 }
 
+sub drop {
+    $_[0]->collection->drop;
+}
+
 sub search {
     my ($self, %args) = @_;
 
