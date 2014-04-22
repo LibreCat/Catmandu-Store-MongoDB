@@ -45,7 +45,13 @@ our $VERSION = '0.0301';
     # Search
     my $hits = $store->bag->search(query => '{"name":"Patrick"}');
     my $hits = $store->bag->search(query => {name => "Patrick"} , start => 0 , limit => 100);
+    
+    my $next_page = $hits->next_page;
+    my $hits = $store->bag->search(query => '{"name":"Patrick"}' , page => $next_page);
+
     my $iterator = $store->bag->searcher(query => {name => "Patrick"});
+
+
 
 =head1 DESCRIPTION
 
