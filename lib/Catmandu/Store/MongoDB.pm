@@ -44,6 +44,7 @@ our $VERSION = '0.0301';
 
     # Search
     my $hits = $store->bag->search(query => '{"name":"Patrick"}');
+    my $hits = $store->bag->search(query => '{"name":"Patrick"}' , sort => { age => -1} );
     my $hits = $store->bag->search(query => {name => "Patrick"} , start => 0 , limit => 100);
     
     my $next_page = $hits->next_page;
