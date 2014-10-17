@@ -4,7 +4,7 @@ Catmandu::Store::MongoDB - A searchable store backed by MongoDB
 
 # VERSION
 
-Version 0.0301
+Version 0.0302
 
 # SYNOPSIS
 

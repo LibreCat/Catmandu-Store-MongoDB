@@ -112,27 +112,27 @@ has database_name => (is => 'ro', required => 1);
 has database      => (is => 'ro', lazy => 1, builder => '_build_database');
 
 sub _build_client {
-     my $self = shift;
-     my $retry = $self->connect_retry;
-     my $host  = $self->{_args}->{host};
-     $host = 'mongodb://localhost:27017' unless defined $host;
+    my $self  = shift;
+    my $retry = $self->connect_retry;
+    my $args  = delete $self->{_args};
+    my $host  = $self->{_args}->{host} // 'mongodb://localhost:27017';
 
-     do {
-         $self->log->debug("Connecting to $host");
-         my $client = eval {
-            MongoDB::MongoClient->new(delete $self->{_args});
-         };
-         if ($@) {
-             die $@ unless $self->connect_retry;
-             $self->log->info("Can't connect to $host. Sleeping : " . $self->connect_retry_sleep . " seconds");
-             sleep $self->connect_retry_sleep;
-         }
-         else {
-            return $client;
-         }
-     } while (--$retry > 0);
- 
-     Catmandu::Error->throw("Can't connect to $host");
+    do {
+        $self->log->debug("Connecting to $host");
+        my $client = eval { MongoDB::MongoClient->new($args) };
+        if ($@) {
+            die $@ unless $self->connect_retry;
+            $self->log->info("Can't connect to $host. Sleeping : " .
+                             $self->connect_retry_sleep .
+                             " seconds ($retry retries left)");
+            sleep $self->connect_retry_sleep;
+        }
+        else {
+           return $client;
+        }
+    } while (--$retry > 0);
+
+    Catmandu::Error->throw("Can't connect to $host");
 }
 
 sub _build_database {
