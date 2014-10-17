@@ -1,6 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+
+0.0303  2014-10-17 14:20:13 CEST
   - use Dis::Milla
   - retry reconnect option
 
