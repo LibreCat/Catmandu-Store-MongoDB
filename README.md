@@ -56,6 +56,14 @@ connection parameters (see MongoDB::MongoClient for possible options).
 
 Create or retieve a bag with name $name. Returns a Catmandu::Bag.
 
+## client
+
+Return the MongoDB::MongoClient instance.
+
+## database
+
+Return a MongoDB::Database instance.
+
 # SEE ALSO
 
 [Catmandu::Bag](https://metacpan.org/pod/Catmandu::Bag), [Catmandu::Searchable](https://metacpan.org/pod/Catmandu::Searchable) , [MongoDB::MongoClient](https://metacpan.org/pod/MongoDB::MongoClient)
