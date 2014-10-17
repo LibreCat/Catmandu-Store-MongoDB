@@ -1,8 +1,12 @@
 Revision history for Catmandu-Store-MongoDB
 
+<<<<<<< HEAD
 0.0302  2014-04-25
   - more pod
   - more tests
+=======
+{{$NEXT}}
+>>>>>>> 053d9906108aae17d8e9af8b287bc755b384496b
 
 0.0301  2013-04-22
   - fix Bag delete_by_query

@@ -26,7 +26,11 @@ sub _build_collection {
 sub generator {
     my ($self) = @_;
     sub {
-        state $cursor = $self->collection->find;
+        state $cursor = do {
+            my $c = $self->collection->find;
+            $c->immortal(1);
+            $c;
+        };
         $cursor->next;
     };
 }
