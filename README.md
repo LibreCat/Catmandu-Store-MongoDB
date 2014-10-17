@@ -52,6 +52,11 @@ Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
 Create a new Catmandu::Store::MongoDB store with name $name. Optionally provide
 connection parameters (see MongoDB::MongoClient for possible options).
 
+This module support to additional connection parameters:
+
+    - connect_retry => NUM : connection's should be retried NUM times for success
+    - connect_retry_sleep => NUM : sleep NUM seconds after any connection failure
+
 ## bag($name)
 
 Create or retieve a bag with name $name. Returns a Catmandu::Bag.

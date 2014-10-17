@@ -67,6 +67,11 @@ Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
 Create a new Catmandu::Store::MongoDB store with name $name. Optionally provide
 connection parameters (see MongoDB::MongoClient for possible options).
 
+This module support to additional connection parameters:
+    
+    - connect_retry => NUM : connection's should be retried NUM times for success
+    - connect_retry_sleep => NUM : sleep NUM seconds after any connection failure
+
 =head2 bag($name)
 
 Create or retieve a bag with name $name. Returns a Catmandu::Bag.
@@ -100,12 +105,34 @@ my $CLIENT_ARGS = [qw(
     inflate_dbrefs
 )];
 
+has connect_retry        => (is => 'ro', default => sub { 0 } );
+has connect_retry_sleep  => (is => 'ro', default => sub { 1 } );
 has client        => (is => 'ro', lazy => 1, builder => '_build_client');
 has database_name => (is => 'ro', required => 1);
 has database      => (is => 'ro', lazy => 1, builder => '_build_database');
 
 sub _build_client {
-    MongoDB::MongoClient->new(delete $_[0]->{_args});
+     my $self = shift;
+     my $retry = $self->connect_retry;
+     my $host  = $self->{_args}->{host};
+     $host = 'mongodb://localhost:27017' unless defined $host;
+
+     do {
+         $self->log->debug("Connecting to $host");
+         my $client = eval {
+            MongoDB::MongoClient->new(delete $self->{_args});
+         };
+         if ($@) {
+             die $@ unless $self->connect_retry;
+             $self->log->info("Can't connect to $host. Sleeping : " . $self->connect_retry_sleep . " seconds");
+             sleep $self->connect_retry_sleep;
+         }
+         else {
+            return $client;
+         }
+     } while (--$retry > 0);
+ 
+     Catmandu::Error->throw("Can't connect to $host");
 }
 
 sub _build_database {
