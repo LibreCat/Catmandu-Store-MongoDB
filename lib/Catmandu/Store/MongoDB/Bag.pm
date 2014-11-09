@@ -154,16 +154,21 @@ sub delete_by_query {
 sub search {
     my ($self, %args) = @_;
 
-    my $query = $args{query};
-    my $start = $args{start};
-    my $limit = $args{limit};
-    my $bag   = $args{reify};
-
+    my $query  = $args{query};
+    my $start  = $args{start};
+    my $limit  = $args{limit};
+    my $bag    = $args{reify}; # when is this arg set?
+    my $fields = $args{fields};
+    
     my $cursor = $self->collection->find($query)->skip($start)->limit($limit);
     if ($bag) { # only retrieve _id
         $cursor->fields({})
     }
-    if (my $sort =  $args{sort}) {
+    elsif ($fields) { # only retrieve specified fields
+        $cursor->fields($fields);
+    }
+
+    if (my $sort = $args{sort}) {
         $cursor->sort($sort);
     }
 
