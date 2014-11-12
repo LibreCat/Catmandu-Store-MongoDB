@@ -46,11 +46,13 @@ our $VERSION = '0.0303';
     my $hits = $store->bag->search(query => '{"name":"Patrick"}');
     my $hits = $store->bag->search(query => '{"name":"Patrick"}' , sort => { age => -1} );
     my $hits = $store->bag->search(query => {name => "Patrick"} , start => 0 , limit => 100);
+    my $hits = $store->bag->search(query => {name => "Patrick"} , fields => {_id => 0, name => 1});
     
     my $next_page = $hits->next_page;
     my $hits = $store->bag->search(query => '{"name":"Patrick"}' , page => $next_page);
 
     my $iterator = $store->bag->searcher(query => {name => "Patrick"});
+    my $iterator = $store->bag->searcher(query => {name => "Patrick"}, fields => {_id => 0, name => 1});
 
 
 
@@ -83,6 +85,12 @@ Return the MongoDB::MongoClient instance.
 =head2 database
 
 Return a MongoDB::Database instance.
+
+=head1 Search
+
+Search the database: see L<Catmandu::Searchable>. This module supports an additional search parameter:
+
+    - fields => { <field> => <0|1> } : limit fields to return from a query
 
 =cut
 
