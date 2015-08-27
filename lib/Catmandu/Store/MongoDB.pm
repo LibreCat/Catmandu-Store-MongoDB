@@ -7,17 +7,11 @@ use MongoDB;
 
 with 'Catmandu::Store';
 
+our $VERSION = '0.0303';
+
 =head1 NAME
 
 Catmandu::Store::MongoDB - A searchable store backed by MongoDB
-
-=head1 VERSION
-
-Version 0.0302
-
-=cut
-
-our $VERSION = '0.0303';
 
 =head1 SYNOPSIS
 
