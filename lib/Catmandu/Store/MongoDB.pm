@@ -87,24 +87,22 @@ Return a L<MongoDB::Database> instance.
 
 =cut
 
-my $CLIENT_ARGS = [qw(
-    host
-    w
-    wtimeout
-    j
-    auto_reconnect
-    auto_connect
-    timeout
-    username
-    password
-    db_name
-    query_timeout
-    max_bson_size
-    find_master
-    ssl
-    dt_type
-    inflate_dbrefs
-)];
+my $CLIENT_ARGS = [
+    qw(
+        connect_timeout_ms
+        db_name
+        dt_type
+        find_master
+        host
+        j
+        password
+        socket_timeout_ms
+        ssl
+        username
+        w
+        wtimeout
+        )
+];
 
 has connect_retry        => (is => 'ro', default => sub { 0 } );
 has connect_retry_sleep  => (is => 'ro', default => sub { 1 } );
