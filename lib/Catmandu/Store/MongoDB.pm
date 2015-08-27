@@ -15,6 +15,12 @@ Catmandu::Store::MongoDB - A searchable store backed by MongoDB
 
 =head1 SYNOPSIS
 
+    # On the command line
+    $ catmandu import -v JSON --multiline 1 to MongoDB --database_name bibliography --bag books < books.json
+    $ catmandu export MongoDB --database_name bibliography --bag books to YAML
+    $ catmandu count MongoDB --database_name bibliography --bag books --query '{"PublicationYear": "1937"}'
+
+    # In perl
     use Catmandu::Store::MongoDB;
 
     my $store = Catmandu::Store::MongoDB->new(database_name => 'test');
@@ -46,37 +52,38 @@ Catmandu::Store::MongoDB - A searchable store backed by MongoDB
 
     my $iterator = $store->bag->searcher(query => {name => "Patrick"});
 
-
-
 =head1 DESCRIPTION
 
 A Catmandu::Store::MongoDB is a Perl package that can store data into
-MongoDB databases. The database as a whole is called a 'store'.
+L<MongoDB> databases. The database as a whole is called a 'store'.
 Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
+
+=head1 DEPRECATION NOTICE
+
+The following connection parameters are depreacted and will be removed in a future version of this module:
+    
+    - connect_retry
+    - connect_retry_sleep
 
 =head1 METHODS
 
 =head2 new(database_name => $name , %opts )
 
-Create a new Catmandu::Store::MongoDB store with name $name. Optionally provide
-connection parameters (see MongoDB::MongoClient for possible options).
-
-This module support to additional connection parameters:
-    
-    - connect_retry => NUM : connection's should be retried NUM times for success
-    - connect_retry_sleep => NUM : sleep NUM seconds after any connection failure
+Create a new Catmandu::Store::MongoDB store with name $name. Optionally 
+provide connection parameters (see L<MongoDB::MongoClient> for possible 
+options).
 
 =head2 bag($name)
 
-Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
 
 =head2 client
 
-Return the MongoDB::MongoClient instance.
+Return the L<MongoDB::MongoClient> instance.
 
 =head2 database
 
-Return a MongoDB::Database instance.
+Return a L<MongoDB::Database> instance.
 
 =cut
 
@@ -148,6 +155,10 @@ L<Catmandu::Bag>, L<Catmandu::Searchable> , L<MongoDB::MongoClient>
 =head1 AUTHOR
 
 Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
+
+=head1 CONTRIBUTORS
+
+Johann Rôlschewski, C<< <jorol at cpan.org> >>
 
 =head1 LICENSE AND COPYRIGHT
 
