@@ -104,42 +104,40 @@ my $CLIENT_ARGS = [
         )
 ];
 
-has connect_retry        => (is => 'ro', default => sub { 0 } );
-has connect_retry_sleep  => (is => 'ro', default => sub { 1 } );
+# deprecated. remove this attribute in a future version
+has connect_retry => ( is => 'ro' );
+# deprecated. remove this attribute in a future version
+has connect_retry_sleep => ( is => 'ro' );
 has client        => (is => 'ro', lazy => 1, builder => '_build_client');
 has database_name => (is => 'ro', required => 1);
 has database      => (is => 'ro', lazy => 1, builder => '_build_database');
 
 sub _build_client {
-    my $self  = shift;
-    my $retry = $self->connect_retry;
-    my $args  = delete $self->{_args};
-    my $host  = $self->{_args}->{host} // 'mongodb://localhost:27017';
-
-    do {
-        $self->log->debug("Connecting to $host");
-        my $client = eval { MongoDB::MongoClient->new($args) };
-        if ($@) {
-            die $@ unless $self->connect_retry;
-            $self->log->info("Can't connect to $host. Sleeping : " .
-                             $self->connect_retry_sleep .
-                             " seconds ($retry retries left)");
-            sleep $self->connect_retry_sleep;
-        }
-        else {
-           return $client;
-        }
-    } while (--$retry > 0);
-
-    Catmandu::Error->throw("Can't connect to $host");
+    my $self = shift;
+    my $args = delete $self->{_args};
+    my $host = $self->{_args}->{host} // 'mongodb://localhost:27017';
+    $self->log->debug("Build MongoClient for $host");
+    my $client = MongoDB::MongoClient->new($args);
+    return $client;
 }
 
 sub _build_database {
-    my $self = $_[0]; $self->client->get_database($self->database_name);
+    my $self          = shift;
+    my $database_name = $self->database_name;
+    $self->log->debug("Build or get database $database_name");
+    my $database = $self->client->get_database($database_name);
+    return $database;
 }
 
 sub BUILD {
     my ($self, $args) = @_;
+
+    if ( $self->{connect_retry} || $self->{connect_retry_sleep} ) {
+        warnings::warnif( "deprecated",
+            "Connection parameter \'connect_retry\' and \'connect_retry_sleep\' are deprecated and will be removed in future versions of Catmandu::Store::MongoDB"
+        );
+    }
+
     $self->{_args} = {};
     for my $key (@$CLIENT_ARGS) {
         $self->{_args}{$key} = $args->{$key} if exists $args->{$key};
@@ -156,7 +154,7 @@ Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
 
 =head1 CONTRIBUTORS
 
-Johann Rôlschewski, C<< <jorol at cpan.org> >>
+Johann Rolschewski, C<< <jorol at cpan.org> >>
 
 =head1 LICENSE AND COPYRIGHT
 
