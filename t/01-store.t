@@ -10,8 +10,6 @@ use Catmandu::Store::MongoDB;
 
 use MongoDBTest '$conn';
 
-plan tests => 10;
-
 ok $conn;
 
 my $db = $conn->get_database('test_database');
@@ -47,7 +45,9 @@ $store->bag->delete_all;
 is $store->bag->count , 0;
 
 END {
-	if ($db) {
-		$db->drop;
-	}
+    if ($db) {
+        $db->drop;
+    }
 }
+
+done_testing;
