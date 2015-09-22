@@ -2,12 +2,14 @@
 
 Catmandu::Store::MongoDB - A searchable store backed by MongoDB
 
-# VERSION
-
-Version 0.0302
-
 # SYNOPSIS
 
+    # On the command line
+    $ catmandu import -v JSON --multiline 1 to MongoDB --database_name bibliography --bag books < books.json
+    $ catmandu export MongoDB --database_name bibliography --bag books to YAML
+    $ catmandu count MongoDB --database_name bibliography --bag books --query '{"PublicationYear": "1937"}'
+
+    # In perl
     use Catmandu::Store::MongoDB;
 
     my $store = Catmandu::Store::MongoDB->new(database_name => 'test');
@@ -42,32 +44,35 @@ Version 0.0302
 # DESCRIPTION
 
 A Catmandu::Store::MongoDB is a Perl package that can store data into
-MongoDB databases. The database as a whole is called a 'store'.
+[MongoDB](https://metacpan.org/pod/MongoDB) databases. The database as a whole is called a 'store'.
 Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
+
+# DEPRECATION NOTICE
+
+The following connection parameters are depreacted and will be removed in a future version of this module:
+
+    - connect_retry
+    - connect_retry_sleep
 
 # METHODS
 
 ## new(database\_name => $name , %opts )
 
-Create a new Catmandu::Store::MongoDB store with name $name. Optionally provide
-connection parameters (see MongoDB::MongoClient for possible options).
-
-This module support to additional connection parameters:
-
-    - connect_retry => NUM : connection's should be retried NUM times for success
-    - connect_retry_sleep => NUM : sleep NUM seconds after any connection failure
+Create a new Catmandu::Store::MongoDB store with name $name. Optionally 
+provide connection parameters (see [MongoDB::MongoClient](https://metacpan.org/pod/MongoDB::MongoClient) for possible 
+options).
 
 ## bag($name)
 
-Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+Create or retieve a bag with name $name. Returns a [Catmandu::Bag](https://metacpan.org/pod/Catmandu::Bag).
 
 ## client
 
-Return the MongoDB::MongoClient instance.
+Return the [MongoDB::MongoClient](https://metacpan.org/pod/MongoDB::MongoClient) instance.
 
 ## database
 
-Return a MongoDB::Database instance.
+Return a [MongoDB::Database](https://metacpan.org/pod/MongoDB::Database) instance.
 
 # SEE ALSO
 
@@ -76,6 +81,10 @@ Return a MongoDB::Database instance.
 # AUTHOR
 
 Nicolas Steenlant, `<nicolas.steenlant at ugent.be>`
+
+# CONTRIBUTORS
+
+Johann Rolschewski, `<jorol at cpan.org>`
 
 # LICENSE AND COPYRIGHT
 
