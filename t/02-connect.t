@@ -14,17 +14,14 @@ my @pkgs = qw(
 require_ok $_ for @pkgs;
 
 # Connect to a non-existing host
-my $store = Catmandu->store('MongoDB' , database_name => 'test' , host => 'mongodb://localhost:0');
-
-dies_ok { $store->first } 'expecting to die';
-
-$store = Catmandu->store('MongoDB' , 
-			database_name => 'test' , 
-			host => 'mongodb://localhost:0' , 
-			connect_retry => 2 ,
-			connect_retry_sleep => 2
+my $store = Catmandu->store(
+    'MongoDB',
+    database_name => 'test',
+    host          => 'mongodb://localhost:0'
 );
 
-throws_ok { $store->first } 'Catmandu::Error' , 'expecting to throw a Catmandu::Error';
+dies_ok { $store->first } 'expecting to die';
+throws_ok { $store->first } 'MongoDB::SelectionError',
+    'expecting to throw a MongoDB::SelectionError';
 
-done_testing 5;
+done_testing;
