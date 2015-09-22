@@ -7,7 +7,7 @@ use MongoDB;
 
 with 'Catmandu::Store';
 
-our $VERSION = '0.0303';
+our $VERSION = '0.04';
 
 =head1 NAME
 
