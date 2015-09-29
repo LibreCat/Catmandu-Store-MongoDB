@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - require JSON::MaybeXS
 
 0.04  2015-09-22 11:05:30 CEST
   - MongoDB 1.0.0 driver support

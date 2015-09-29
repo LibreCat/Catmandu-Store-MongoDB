@@ -9,5 +9,6 @@ on 'test', sub {
 };
 
 requires 'Catmandu', '0.9205';
+requires 'JSON::MaybeXS', '1.003005';
 requires 'MongoDB', '1.0.0';
 requires 'Moo','1.006000';

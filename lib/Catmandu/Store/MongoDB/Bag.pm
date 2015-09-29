@@ -5,7 +5,7 @@ use Catmandu::Util qw(:is);
 use Carp qw(confess);
 use Catmandu::Store::MongoDB::Searcher;
 use Catmandu::Hits;
-use JSON qw(decode_json);
+use JSON::MaybeXS qw(decode_json);
 use Moo;
 
 with 'Catmandu::Bag';
