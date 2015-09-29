@@ -18,13 +18,14 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu-Store-MongoDB",
-  "dist_version" => "0.04",
+  "dist_version" => "0.0401",
   "license" => "perl",
   "module_name" => "Catmandu::Store::MongoDB",
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
     "Catmandu" => "0.9205",
+    "JSON::MaybeXS" => "1.003005",
     "MongoDB" => "v1.0.0",
     "Moo" => "1.006000",
     "perl" => "v5.10.1"
