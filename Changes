@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - fix MongoDBTest
 
 0.0401  2015-09-29 10:04:42 CEST
   - require JSON::MaybeXS
