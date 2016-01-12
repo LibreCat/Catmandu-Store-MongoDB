@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - drop support
 
 0.0402  2015-09-30 10:08:35 CEST
   - fix MongoDBTest

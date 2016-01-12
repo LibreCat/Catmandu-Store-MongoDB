@@ -1,13 +1,80 @@
 package Catmandu::Store::MongoDB;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.0402';
+
 use Moo;
 use Catmandu::Store::MongoDB::Bag;
 use MongoDB;
+use namespace::clean;
 
 with 'Catmandu::Store';
 
-our $VERSION = '0.0402';
+my $CLIENT_ARGS = [qw(
+    connect_timeout_ms
+    db_name
+    dt_type
+    find_master
+    host
+    j
+    password
+    socket_timeout_ms
+    ssl
+    username
+    w
+    wtimeout
+)];
+
+# deprecated. remove this attribute in a future version
+has connect_retry => ( is => 'ro' );
+# deprecated. remove this attribute in a future version
+has connect_retry_sleep => ( is => 'ro' );
+has client        => (is => 'ro', lazy => 1, builder => '_build_client');
+has database_name => (is => 'ro', required => 1);
+has database      => (is => 'ro', lazy => 1, builder => '_build_database');
+
+sub _build_client {
+    my $self = shift;
+    my $args = delete $self->{_args};
+    my $host = $self->{_args}->{host} // 'mongodb://localhost:27017';
+    $self->log->debug("Build MongoClient for $host");
+    my $client = MongoDB::MongoClient->new($args);
+    return $client;
+}
+
+sub _build_database {
+    my $self          = shift;
+    my $database_name = $self->database_name;
+    $self->log->debug("Build or get database $database_name");
+    my $database = $self->client->get_database($database_name);
+    return $database;
+}
+
+sub BUILD {
+    my ($self, $args) = @_;
+
+    if ($self->{connect_retry} || $self->{connect_retry_sleep}) {
+        warnings::warnif("deprecated",
+            "Connection parameter \'connect_retry\' and \'connect_retry_sleep\' are deprecated and will be removed in future versions of Catmandu::Store::MongoDB"
+        );
+    }
+
+    $self->{_args} = {};
+    for my $key (@$CLIENT_ARGS) {
+        $self->{_args}{$key} = $args->{$key} if exists $args->{$key};
+    }
+}
+
+sub drop {
+    $_[0]->database->drop;
+}
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -85,64 +152,9 @@ Return the L<MongoDB::MongoClient> instance.
 
 Return a L<MongoDB::Database> instance.
 
-=cut
+=head2 drop
 
-my $CLIENT_ARGS = [
-    qw(
-        connect_timeout_ms
-        db_name
-        dt_type
-        find_master
-        host
-        j
-        password
-        socket_timeout_ms
-        ssl
-        username
-        w
-        wtimeout
-        )
-];
-
-# deprecated. remove this attribute in a future version
-has connect_retry => ( is => 'ro' );
-# deprecated. remove this attribute in a future version
-has connect_retry_sleep => ( is => 'ro' );
-has client        => (is => 'ro', lazy => 1, builder => '_build_client');
-has database_name => (is => 'ro', required => 1);
-has database      => (is => 'ro', lazy => 1, builder => '_build_database');
-
-sub _build_client {
-    my $self = shift;
-    my $args = delete $self->{_args};
-    my $host = $self->{_args}->{host} // 'mongodb://localhost:27017';
-    $self->log->debug("Build MongoClient for $host");
-    my $client = MongoDB::MongoClient->new($args);
-    return $client;
-}
-
-sub _build_database {
-    my $self          = shift;
-    my $database_name = $self->database_name;
-    $self->log->debug("Build or get database $database_name");
-    my $database = $self->client->get_database($database_name);
-    return $database;
-}
-
-sub BUILD {
-    my ($self, $args) = @_;
-
-    if ( $self->{connect_retry} || $self->{connect_retry_sleep} ) {
-        warnings::warnif( "deprecated",
-            "Connection parameter \'connect_retry\' and \'connect_retry_sleep\' are deprecated and will be removed in future versions of Catmandu::Store::MongoDB"
-        );
-    }
-
-    $self->{_args} = {};
-    for my $key (@$CLIENT_ARGS) {
-        $self->{_args}{$key} = $args->{$key} if exists $args->{$key};
-    }
-}
+Delete the store and all it's bags.
 
 =head1 SEE ALSO
 
@@ -165,5 +177,3 @@ by the Free Software Foundation; or the Artistic License.
 See http://dev.perl.org/licenses/ for more information.
 
 =cut
-
-1;

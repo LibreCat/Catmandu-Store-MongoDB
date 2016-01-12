@@ -1,12 +1,15 @@
 package Catmandu::Store::MongoDB::Bag;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.0402';
+
 use Catmandu::Util qw(:is);
-use Carp qw(confess);
 use Catmandu::Store::MongoDB::Searcher;
 use Catmandu::Hits;
 use JSON::MaybeXS qw(decode_json);
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Bag';
 with 'Catmandu::Searchable';
@@ -186,11 +189,11 @@ sub searcher {
 }
 
 sub translate_sru_sortkeys {
-    confess "Not Implemented";
+    Catmandu::NotImplemented->throw;
 }
 
 sub translate_cql_query {
-    confess "Not Implemented";
+    Catmandu::NotImplemented->throw;
 }
 
 # assume a string query is a JSON encoded MongoDB query
@@ -201,4 +204,11 @@ sub normalize_query {
     decode_json($query);
 }
 
+sub drop {
+    $_[0]->collection->drop;
+}
+
 1;
+
+__END__
+

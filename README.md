@@ -74,6 +74,10 @@ Return the [MongoDB::MongoClient](https://metacpan.org/pod/MongoDB::MongoClient)
 
 Return a [MongoDB::Database](https://metacpan.org/pod/MongoDB::Database) instance.
 
+## drop
+
+Delete the store and all it's bags.
+
 # SEE ALSO
 
 [Catmandu::Bag](https://metacpan.org/pod/Catmandu::Bag), [Catmandu::Searchable](https://metacpan.org/pod/Catmandu::Searchable) , [MongoDB::MongoClient](https://metacpan.org/pod/MongoDB::MongoClient)
