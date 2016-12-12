@@ -215,11 +215,28 @@ sub visit {
             return +{ $op => [ $lft_q, $rgt_q ] };
 
         }
-        #DOESN'T WORK IN MONGO WITH ANY SUB EXPRESSION?
         elsif( $op eq '$not' ){
 
-            Catmandu::NotImplemented->throw( message => "CQL operator 'not' not supported  yet" );
-            #return +{ %$lft_q, '$not' => $rgt_q };
+            my($k,$v) = each(%$rgt_q);
+            if( $k eq '$or' ){
+
+                return +{ %$lft_q, '$nor' => $v };
+
+            }
+            elsif( $k eq '$and' ){
+
+                #$nand not implemented yet (https://jira.mongodb.org/browse/SERVER-15577)
+                return +{ %$lft_q, '$nor' => [{
+                    '$and' => $v
+                }] };
+
+            }else{
+
+                return +{ %$lft_q, '$nor' => [{
+                    '$and' => [{ $k => $v }]
+                }] };
+
+            }
 
         }
     }
