@@ -9,6 +9,7 @@ use Catmandu::Store::MongoDB::Searcher;
 use Catmandu::Hits;
 use JSON::MaybeXS qw(decode_json);
 use Moo;
+use Catmandu::Store::MongoDB::CQL;
 use namespace::clean;
 
 with 'Catmandu::Bag';
@@ -20,6 +21,7 @@ has collection => (
     lazy => 1,
     builder => '_build_collection',
 );
+has cql_mapping => (is => 'ro');
 
 sub _build_collection {
     my ($self) = @_;
@@ -193,7 +195,8 @@ sub translate_sru_sortkeys {
 }
 
 sub translate_cql_query {
-    Catmandu::NotImplemented->throw;
+    my($self,$query) = @_;
+    Catmandu::Store::MongoDB::CQL->new(mapping => $self->cql_mapping)->parse($query);
 }
 
 # assume a string query is a JSON encoded MongoDB query
