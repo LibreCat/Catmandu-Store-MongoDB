@@ -28,7 +28,11 @@ sub parse {
         die "cql error: $error";
     };
 
-    $self->visit($node);
+    my $mongo_query = $self->visit($node);
+
+    $self->log->debug();
+    
+    $mongo_query;
 }
 
 sub visit {
@@ -121,7 +125,7 @@ sub visit {
 
         # trick to force numeric values interpreted as integers
         $term = $term + 0 if ($term =~ /^[1-9]\d*$/);
-        
+
         if ($base eq '=' or $base eq 'scr') {
             unless($unmasked){
                 $term = _is_wildcard( $term ) ?
@@ -194,8 +198,8 @@ sub visit {
 
         return $search_clause;
     }
-    #TODO: apply cql_mapping
     elsif ($node->isa('CQL::ProxNode')) {
+        # TODO: apply cql_mapping
         confess "not supported";
     }
     elsif ($node->isa('CQL::BooleanNode')) {
@@ -256,7 +260,9 @@ Catmandu::Store::MongoDB::CQL - Converts a CQL query string to a MongoDB query s
 
 =head1 SYNOPSIS
 
-    $mongo_query_string = Catmandu::Store::MongoDB::CQL->parse($cql_query_string);
+    $mongo_query = Catmandu::Store::ElasticSearch::CQL
+                    ->new(mapping => $cql_mapping)
+                    ->parse($cql_query_string);
 
 =head1 DESCRIPTION
 

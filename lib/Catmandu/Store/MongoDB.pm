@@ -113,11 +113,14 @@ Catmandu::Store::MongoDB - A searchable store backed by MongoDB
     my $hits = $store->bag->search(query => '{"name":"Patrick"}');
     my $hits = $store->bag->search(query => '{"name":"Patrick"}' , sort => { age => -1} );
     my $hits = $store->bag->search(query => {name => "Patrick"} , start => 0 , limit => 100);
-    
+
     my $next_page = $hits->next_page;
     my $hits = $store->bag->search(query => '{"name":"Patrick"}' , page => $next_page);
 
     my $iterator = $store->bag->searcher(query => {name => "Patrick"});
+
+    # Catmandu::Store::MongoDB supports CQL...
+    my $hits = $store->bag->search(cql_query => 'name any "Patrick"');
 
 =head1 DESCRIPTION
 
@@ -128,17 +131,66 @@ Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
 =head1 DEPRECATION NOTICE
 
 The following connection parameters are depreacted and will be removed in a future version of this module:
-    
+
     - connect_retry
     - connect_retry_sleep
 
 =head1 METHODS
 
-=head2 new(database_name => $name , %opts )
+=head2 new(database_name => $name, %connectio_opts)
 
-Create a new Catmandu::Store::MongoDB store with name $name. Optionally 
-provide connection parameters (see L<MongoDB::MongoClient> for possible 
+=head2 new(database_name => $name , bags => { data => { cql_mapping => $cql_mapping } })
+
+Create a new Catmandu::Store::MongoDB store with name $name. Optionally
+provide connection parameters (see L<MongoDB::MongoClient> for possible
 options).
+
+The store supports CQL searches when a cql_mapping is provided. This hash
+contains a translation of CQL fields into MongoDB searchable fields.
+
+ # Example mapping
+ $cql_mapping = {
+     indexes => {
+          title => {
+            op => {
+              'any'   => 1 ,
+              'all'   => 1 ,
+              '='     => 1 ,
+              '<>'    => 1 ,
+              'exact' => {field => [qw(mytitle.exact myalttitle.exact)]}
+            } ,
+            sort  => 1,
+            field => 'mytitle',
+            cb    => ['Biblio::Search', 'normalize_title']
+          }
+    }
+ }
+
+The CQL mapping above will support for the 'title' field the CQL operators:
+ any, all, =, <> and exact.
+
+For all the operators the 'title' field will be mapping into the MongoDB field 'mytitle',
+except for the 'exact' operator. In case of 'exact' we will search both the
+'mytitle.exact' and 'myalttitle.exact' fields.
+
+The CQL mapping allows for sorting on the 'title' field. If, for instance, we would like
+to use a special MongoDB field for sorting we could have written
+"sort => { field => 'mytitle.sort' }".
+
+The CQL has an optional callback field 'cb' which contains a reference to subroutines
+to rewrite or augment the search query. In this case, in the Biblio::Search package
+there is a normalize_title subroutine which returns a string or an ARRAY of string
+with augmented title(s). E.g.
+
+    package Biblio::Search;
+
+    sub normalize_title {
+       my ($self,$title) = @_;
+       my $new_title =~ s{[^A-Z0-9]+}{}g;
+       $new_title;
+    }
+
+    1;
 
 =head2 bag($name)
 

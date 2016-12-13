@@ -9,6 +9,7 @@ use Catmandu::Store::MongoDB::Searcher;
 use Catmandu::Hits;
 use JSON::MaybeXS qw(decode_json);
 use Moo;
+use Data::Dumper;
 use Catmandu::Store::MongoDB::CQL;
 use namespace::clean;
 
@@ -192,12 +193,48 @@ sub searcher {
 }
 
 sub translate_sru_sortkeys {
-    Catmandu::NotImplemented->throw;
+    my ($self, $sortkeys) = @_;
+    $self->log->debug("translating sort_keys: $sortkeys");
+    my $keys =
+      [ grep { defined $_ } map { $self->_translate_sru_sortkey($_) } split /\s+/, $sortkeys ];
+    my $mongo_sort = [];
+    # flatten sort keys
+    for (@$keys) {
+        push @$mongo_sort , @$_;
+    }
+    $self->log->debug("mongo_sort : " . Dumper($mongo_sort));
+    $mongo_sort;
+}
+
+sub _translate_sru_sortkey {
+    my ($self, $sortkey) = @_;
+    my ($field, $schema, $asc) = split /,/, $sortkey;
+    $field || return;
+    if (my $map = $self->cql_mapping) {
+        $field = lc $field;
+        $field =~ s/(?<=[^_])_(?=[^_])//g if $map->{strip_separating_underscores};
+        $map = $map->{indexes} || return;
+        $map = $map->{$field}  || return;
+        $map->{sort} || return;
+        if (ref $map->{sort} && $map->{sort}{field}) {
+            $field = $map->{sort}{field};
+        } elsif (ref $map->{field}) {
+            $field = $map->{field}->[0];
+        } elsif ($map->{field}) {
+            $field = $map->{field};
+        }
+    }
+    $asc //= 1;
+    [ $field => $asc ];
 }
 
 sub translate_cql_query {
     my($self,$query) = @_;
-    Catmandu::Store::MongoDB::CQL->new(mapping => $self->cql_mapping)->parse($query);
+    $self->log->debug("translating cql: $query");
+    my $mongo_query =
+     Catmandu::Store::MongoDB::CQL->new(mapping => $self->cql_mapping)->parse($query);
+    $self->log->debug("mongo_query : " . Dumper($mongo_query));
+    $mongo_query;
 }
 
 # assume a string query is a JSON encoded MongoDB query
@@ -215,3 +252,19 @@ sub drop {
 1;
 
 __END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Store::MongoDB::Bag - Catmandu::Bag implementation for MongoDB
+
+=head1 DESCRIPTION
+
+This class isn't normally used directly. Instances are constructed using the store's C<bag> method.
+
+=head1 SEE ALSO
+
+L<Catmandu::Bag>, L<Catmandu::Searchable>
+
+=cut
