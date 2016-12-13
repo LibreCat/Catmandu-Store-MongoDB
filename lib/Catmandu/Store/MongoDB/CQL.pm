@@ -3,7 +3,7 @@ package Catmandu::Store::MongoDB::CQL;
 use Catmandu::Sane;
 use CQL::Parser;
 use Carp qw(confess);
-use Catmandu::Util qw(:is array_includes);
+use Catmandu::Util qw(:is array_includes require_package);
 use Moo;
 
 with 'Catmandu::Logger';
