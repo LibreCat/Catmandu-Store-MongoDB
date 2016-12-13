@@ -167,7 +167,7 @@ sub visit {
             unless($unmasked){
                 @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } split /\s+/, $term;
             }
-            $search_clause = +{ $search_field => { '$in' => [ split /\s+/, $term ] } };
+            $search_clause = +{ $search_field => { '$in' => \@terms } };
 
         } elsif ($base eq 'within') {
 
