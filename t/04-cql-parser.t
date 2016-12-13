@@ -274,7 +274,7 @@ is_deeply(
     "cql - cb term field 2"
 );
 
-done_testing 29;
+done_testing 31;
 
 package T;
 use strict;
