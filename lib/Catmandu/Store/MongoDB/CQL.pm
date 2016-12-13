@@ -155,17 +155,17 @@ sub visit {
 
         } elsif ($base eq 'all') {
 
-            my @terms = ( $term );
+            my @terms = split /\s+/, $term;
             unless($unmasked){
-                @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } split /\s+/, $term;
+                @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } @terms;
             }
             $search_clause = +{ $search_field => { '$all' => \@terms } };
 
         } elsif ($base eq 'any') {
 
-            my @terms = ( $term );
+            my @terms = split /\s+/, $term;
             unless($unmasked){
-                @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } split /\s+/, $term;
+                @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } @terms;
             }
             $search_clause = +{ $search_field => { '$in' => \@terms } };
 
