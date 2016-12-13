@@ -20,21 +20,23 @@ sub _build_parser {
 
 sub parse {
     my ($self, $query) = @_;
+
     my $node = eval {
         $self->parser->parse($query)
     } or do {
         my $error = $@;
         die "cql error: $error";
     };
+
     $self->visit($node);
 }
+
 sub visit {
     my ($self, $node) = @_;
 
     my $indexes = $self->mapping ? $self->mapping->{indexes} : undef;
 
     if ($node->isa('CQL::TermNode')) {
-
         my $term = $node->getTerm;
 
         if ($term =~ $match_all) {
@@ -52,7 +54,8 @@ sub visit {
         if ($base eq 'scr') {
             if ($self->mapping && $self->mapping->{default_relation}) {
                 $base = $self->mapping->{default_relation};
-            } else {
+            }
+            else {
                 $base = '=';
             }
         }
@@ -66,8 +69,8 @@ sub visit {
             else {
                 $search_field = '_all';
             }
-        }else{
-
+        }
+        else {
             $search_field = $qualifier;
 
             #change search field
@@ -78,26 +81,20 @@ sub visit {
             my $op = $q_mapping->{op}->{$base};
 
             if (ref $op && $op->{field}) {
-
                 $search_field = $op->{field};
-
             } elsif ($q_mapping->{field}) {
-
                 $search_field = $q_mapping->{field};
-
             }
 
             #change term using filters
             my $filters;
             if (ref $op && $op->{filter}) {
-
                 $filters = $op->{filter};
-
-            } elsif ($q_mapping->{filter}) {
-
-                $filters = $q_mapping->{filter};
-
             }
+            elsif ($q_mapping->{filter}) {
+                $filters = $q_mapping->{filter};
+            }
+
             if ($filters) {
                 for my $filter (@$filters) {
                     if ($filter eq 'lowercase') {
@@ -110,71 +107,68 @@ sub visit {
             if (ref $op && $op->{cb}) {
                 my ($pkg, $sub) = @{$op->{cb}};
                 $term = require_package($pkg)->$sub($term);
-            } elsif ($q_mapping->{cb}) {
+            }
+            elsif ($q_mapping->{cb}) {
                 my ($pkg, $sub) = @{$q_mapping->{cb}};
                 $term = require_package($pkg)->$sub($term);
             }
-
         }
 
         #field search
         my $unmasked = array_includes([map { $_->[1] } @modifiers],"cql.unmasked");
 
         if ($base eq '=' or $base eq 'scr') {
-
             unless($unmasked){
                 $term = _is_wildcard( $term ) ?
                     _wildcard_to_regex( $term ) :
                     $term;
             }
+
             $search_clause = +{ $search_field => $term };
-
-        } elsif ($base eq '<') {
-
+        }
+        elsif ($base eq '<') {
             $search_clause = +{ $search_field => { '$lt' => $term } };
-
-        } elsif ($base eq '>') {
-
+        }
+        elsif ($base eq '>') {
             $search_clause = +{ $search_field => { '$gt' => $term } };
-
-        } elsif ($base eq '<=') {
-
+        }
+        elsif ($base eq '<=') {
             $search_clause = +{ $search_field => { '$lte' => $term } };
-
-        } elsif ($base eq '>=') {
-
+        }
+        elsif ($base eq '>=') {
             $search_clause = +{ $search_field => { '$gte' => $term } };
-
-        } elsif ($base eq '<>') {
-
+        }
+        elsif ($base eq '<>') {
             $search_clause = +{ $search_field => { '$ne' => $term } };
-
-        } elsif ($base eq 'exact') {
-
+        }
+        elsif ($base eq 'exact') {
             $search_clause = +{ $search_field => $term };
-
-        } elsif ($base eq 'all') {
-
+        }
+        elsif ($base eq 'all') {
             my @terms = split /\s+/, $term;
+
             unless($unmasked){
                 @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } @terms;
             }
+
             $search_clause = +{ $search_field => { '$all' => \@terms } };
-
-        } elsif ($base eq 'any') {
-
+        }
+        elsif ($base eq 'any') {
             my @terms = split /\s+/, $term;
+
             unless($unmasked){
                 @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } @terms;
             }
+
             $search_clause = +{ $search_field => { '$in' => \@terms } };
-
-        } elsif ($base eq 'within') {
-
+        }
+        elsif ($base eq 'within') {
             my @range = split /\s+/, $term;
+
             if (@range == 1) {
                 $search_clause = +{ $search_field => $term };
-            } else {
+            }
+            else {
                 $search_clause = +{
                     $search_field => {
                         '$gte' => $range[0],
@@ -182,27 +176,23 @@ sub visit {
                     }
                 };
             }
-
-        } else {
-
+        }
+        else {
             unless($unmasked){
                 $term = _is_wildcard( $term ) ?
                     _wildcard_to_regex( $term ) :
                     $term;
             }
-            $search_clause = +{ $search_field => $term };
 
+            $search_clause = +{ $search_field => $term };
         }
 
         return $search_clause;
-
     }
-
     #TODO: apply cql_mapping
     elsif ($node->isa('CQL::ProxNode')) {
         confess "not supported";
     }
-
     elsif ($node->isa('CQL::BooleanNode')) {
         my $lft = $node->left;
         my $rgt = $node->right;
@@ -210,41 +200,38 @@ sub visit {
         my $rgt_q = $self->visit($rgt);
         my $op = '$'.lc( $node->op );
 
-        if( $op eq '$and' || $op eq '$or' ){
-
+        if ( $op eq '$and' || $op eq '$or' ) {
             return +{ $op => [ $lft_q, $rgt_q ] };
-
         }
-        elsif( $op eq '$not' ){
-
+        elsif ( $op eq '$not' ) {
             my($k,$v) = each(%$rgt_q);
+
             if( $k eq '$or' ){
-
                 return +{ %$lft_q, '$nor' => $v };
-
             }
-            elsif( $k eq '$and' ){
-
+            elsif ( $k eq '$and' ) {
                 #$nand not implemented yet (https://jira.mongodb.org/browse/SERVER-15577)
                 return +{ %$lft_q, '$nor' => [{
                     '$and' => $v
                 }] };
-
-            }else{
-
+            } else {
                 return +{ %$lft_q, '$nor' => [{
                     '$and' => [{ $k => $v }]
                 }] };
-
             }
-
         }
     }
 }
+
 sub _is_wildcard {
     my $value = $_[0];
-    (index($value,'^') == 0) || (rindex($value,'^') == length($value) - 1) || (index($value,'*') >= 0) || (index($value,'?') >= 0);
+
+    (index($value,'^') == 0) ||
+    (rindex($value,'^') == length($value) - 1) ||
+    (index($value,'*') >= 0) ||
+    (index($value,'?') >= 0);
 }
+
 sub _wildcard_to_regex {
     my $value = $_[0];
     my $regex = $value;

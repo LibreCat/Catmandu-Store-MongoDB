@@ -161,7 +161,6 @@ is_deeply(
     { ln2 => { '$ne' => "Franck" } },
     "cql - term query - field mapping 2"
 );
-
 is_deeply(
     $parser->parse(qq(year > 2009)),
     { year => { '$gt' => 2009 } },
