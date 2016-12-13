@@ -36,6 +36,8 @@ sub visit {
 
     my $indexes = $self->mapping ? $self->mapping->{indexes} : undef;
 
+    confess "no cql_mapping.indexes defined" unless $indexes;
+
     if ($node->isa('CQL::TermNode')) {
         my $term = $node->getTerm;
 
@@ -117,6 +119,9 @@ sub visit {
         #field search
         my $unmasked = array_includes([map { $_->[1] } @modifiers],"cql.unmasked");
 
+        # trick to force numeric values interpreted as integers
+        $term = $term + 0 if ($term =~ /^[1-9]\d*$/);
+        
         if ($base eq '=' or $base eq 'scr') {
             unless($unmasked){
                 $term = _is_wildcard( $term ) ?
@@ -242,6 +247,8 @@ sub _wildcard_to_regex {
 }
 
 1;
+
+__END__
 
 =head1 NAME
 

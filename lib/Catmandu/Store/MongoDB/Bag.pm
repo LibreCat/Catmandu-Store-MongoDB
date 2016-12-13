@@ -21,6 +21,7 @@ has collection => (
     lazy => 1,
     builder => '_build_collection',
 );
+
 has cql_mapping => (is => 'ro');
 
 sub _build_collection {
@@ -214,4 +215,3 @@ sub drop {
 1;
 
 __END__
-
