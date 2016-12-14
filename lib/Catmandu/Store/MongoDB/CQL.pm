@@ -4,6 +4,7 @@ use Catmandu::Sane;
 use CQL::Parser;
 use Carp qw(confess);
 use Catmandu::Util qw(:is array_includes require_package);
+use Data::Dumper;
 use Moo;
 
 with 'Catmandu::Logger';
@@ -30,7 +31,11 @@ sub parse {
 
     my $mongo_query = $self->visit($node);
 
-    $self->log->debug();
+    if ( $self->log->is_debug() ) {
+
+        $self->log->debug("CQL query: $query, translated into mongo query: ".Dumper($mongo_query));
+
+    }
 
     $mongo_query;
 }
@@ -53,7 +58,6 @@ sub visit {
         my $relation  = $node->getRelation;
         my @modifiers = $relation->getModifiers;
         my $base      = lc $relation->getBase;
-        my $m_search = {};
         my $search_field;
         my $search_clause;
 
@@ -156,8 +160,30 @@ sub visit {
         elsif ($base eq 'all') {
             my @terms = split /\s+/, $term;
 
-            unless($unmasked){
-                @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } @terms;
+            #query $all in mongo means exact matching, so we always need regular expressions here
+            for(my $i = 0; $i < scalar(@terms) ; $i++){
+
+                my $term = $terms[$i];
+
+                if ( $unmasked ) {
+
+                    $term = _quote_wildcard( $term );
+                    $term = qr($term);
+
+                }
+                elsif ( _is_wildcard( $term ) ) {
+
+                    $term = _wildcard_to_regex( $term );
+
+                }
+                else {
+
+                    $term = qr($term);
+
+                }
+
+                $terms[$i] = $term;
+
             }
 
             $search_clause = +{ $search_field => { '$all' => \@terms } };
@@ -165,8 +191,30 @@ sub visit {
         elsif ($base eq 'any') {
             my @terms = split /\s+/, $term;
 
-            unless($unmasked){
-                @terms = map { _is_wildcard( $_ ) ? _wildcard_to_regex( $_ ) : $_ } @terms;
+            #query $in in mongo means exact matching, so we always need regular expressions here
+            for(my $i = 0; $i < scalar(@terms) ; $i++){
+
+                my $term = $terms[$i];
+
+                if ( $unmasked ) {
+
+                    $term = _quote_wildcard( $term );
+                    $term = qr($term);
+
+                }
+                elsif ( _is_wildcard( $term ) ) {
+
+                    $term = _wildcard_to_regex( $term );
+
+                }
+                else {
+
+                    $term = qr($term);
+
+                }
+
+                $terms[$i] = $term;
+
             }
 
             $search_clause = +{ $search_field => { '$in' => \@terms } };
@@ -186,6 +234,7 @@ sub visit {
                 };
             }
         }
+        #as $base is always set, this code should be removed?
         else {
             unless($unmasked){
                 $term = _is_wildcard( $term ) ?
@@ -248,6 +297,14 @@ sub _wildcard_to_regex {
     $regex =~ s/\?/.?/go;
     $regex =~ s/\^$/\$/o;
     qr/$regex/;
+}
+
+sub _quote_wildcard {
+    my $value = $_[0];
+    $value =~ s/\*/\\*/go;
+    $value =~ s/\?/\\?/go;
+    $value =~ s/\^/\\^/go;
+    $value;
 }
 
 1;

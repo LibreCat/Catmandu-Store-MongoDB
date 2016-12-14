@@ -122,33 +122,33 @@ is_deeply(
 );
 is_deeply(
     $parser->parse(qq(first_name any "a b c")),
-    { first_name => { '$in' => [qw(a b c)] } },
+    { first_name => { '$in' => [qr(a),qr(b),qr(c)] } },
     "cql - term query - any"
 );
 is_deeply(
     $parser->parse(qq(first_name any "^a b ^c^")),
-    { first_name => { '$in' => [qr/^a/,"b",qr/^c$/] } },
+    { first_name => { '$in' => [qr(^a),qr(b),qr(^c$)] } },
     "cql - term query - any with wildcard"
 );
 is_deeply(
     $parser->parse(qq(first_name any/cql.unmasked "^a b ^c^")),
-    { first_name => { '$in' => ["^a","b","^c^"] } },
+    { first_name => { '$in' => [qr(\^a),qr(b),qr(\^c\^)] } },
     "cql - term query - any unmasked"
 );
 
 is_deeply(
     $parser->parse(qq(first_name all "a b c")),
-    { first_name => { '$all' => [qw(a b c)] } },
+    { first_name => { '$all' => [qr(a),qr(b),qr(c)] } },
     "cql - term query - all"
 );
 is_deeply(
     $parser->parse(qq(first_name all "^a b ^c^")),
-    { first_name => { '$all' => [qr/^a/,"b",qr/^c$/] } },
+    { first_name => { '$all' => [qr(^a),qr(b),qr(^c$)] } },
     "cql - term query - all with wildcard"
 );
 is_deeply(
     $parser->parse(qq(first_name all/cql.unmasked "^a b ^c^")),
-    { first_name => { '$all' => ["^a","b","^c^"] } },
+    { first_name => { '$all' => [qr(\^a),qr(b),qr(\^c\^)] } },
     "cql - term query - all unmasked"
 );
 is_deeply(
