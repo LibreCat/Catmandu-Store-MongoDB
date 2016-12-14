@@ -349,6 +349,29 @@ This package currently parses most of CQL 1.1:
 See L<https://www.loc.gov/standards/sru/cql/spec.html> for
 more information on the CQL query language.
 
+=head1 LIMITATIONS
+
+MongoDB is not a full-text search engine. All queries will try to find exact
+matches in the database, except for the 'any' and 'all' relations which will
+translate queries into wildcard queries:
+
+   title any 'funny cats'
+
+will be treated internally as something like:
+
+    title : { $regex : /funny/ } OR title : { $regex : /cats/ }
+
+And,
+
+    title all 'funny cats'
+
+as
+
+    title : { $regex : /funny/ } AND title : { $regex : /cats/ }
+
+This makes the 'any' and 'all' not as efficient (fast) as exact matches
+'=','==','exact'.
+
 =head1 METHODS
 
 =head2 parse
