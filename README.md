@@ -91,23 +91,24 @@ contains a translation of CQL fields into MongoDB searchable fields.
 The CQL mapping above will support for the 'title' field the CQL operators:
  any, all, =, <> and exact.
 
-For all the operators the 'title' field will be mapping into the MongoDB field 'mytitle',
-except for the 'exact' operator. In case of 'exact' we will search both the
-'mytitle.exact' and 'myalttitle.exact' fields.
+The 'title' field will be mapped into the MongoDB field 'mytitle',
+except for the 'exact' operator. In case of 'exact' both the
+'mytitle.exact' and 'myalttitle.exact' fields will be searched.
 
-The CQL mapping allows for sorting on the 'title' field. If, for instance, we would like
-to use a special MongoDB field for sorting we could have written
+The CQL mapping allows for sorting on the 'title' field. If, for instance, we
+would like to use a special MongoDB field for sorting we could have written
 "sort => { field => 'mytitle.sort' }".
 
 The CQL has an optional callback field 'cb' which contains a reference to subroutines
 to rewrite or augment the search query. In this case, in the Biblio::Search package
-there is a normalize\_title subroutine which returns a string or an ARRAY of string
+contains a normalize\_title subroutine which returns a string or an ARRAY of string
 with augmented title(s). E.g.
 
     package Biblio::Search;
 
     sub normalize_title {
        my ($self,$title) = @_;
+       # delete all bad characters
        my $new_title =~ s{[^A-Z0-9]+}{}g;
        $new_title;
     }
