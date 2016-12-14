@@ -31,7 +31,7 @@ sub parse {
     my $mongo_query = $self->visit($node);
 
     $self->log->debug();
-    
+
     $mongo_query;
 }
 
@@ -288,6 +288,9 @@ This package currently parses most of CQL 1.1:
     all
     any
     within
+
+See L<https://www.loc.gov/standards/sru/cql/spec.html> for
+more information on the CQL query language.
 
 =head1 METHODS
 

@@ -210,6 +210,7 @@ sub _translate_sru_sortkey {
     my ($self, $sortkey) = @_;
     my ($field, $schema, $asc) = split /,/, $sortkey;
     $field || return;
+    ($asc && ($asc == 1 || $asc == -1)) || return;
     if (my $map = $self->cql_mapping) {
         $field = lc $field;
         $field =~ s/(?<=[^_])_(?=[^_])//g if $map->{strip_separating_underscores};
@@ -224,8 +225,8 @@ sub _translate_sru_sortkey {
             $field = $map->{field};
         }
     }
-    $asc //= 1;
-    [ $field => $asc ];
+    # Use a bad trick to force $asc interpreted as an integer
+    [ $field => $asc + 0 ];
 }
 
 sub translate_cql_query {
