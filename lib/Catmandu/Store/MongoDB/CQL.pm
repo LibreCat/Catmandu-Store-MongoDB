@@ -370,7 +370,7 @@ as
     title : { $regex : /funny/ } AND title : { $regex : /cats/ }
 
 This makes the 'any' and 'all' not as efficient (fast) as exact matches
-'=','==','exact'.
+'==','exact'.
 
 =head1 METHODS
 
