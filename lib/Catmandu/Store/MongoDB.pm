@@ -113,11 +113,13 @@ Catmandu::Store::MongoDB - A searchable store backed by MongoDB
     my $hits = $store->bag->search(query => '{"name":"Patrick"}');
     my $hits = $store->bag->search(query => '{"name":"Patrick"}' , sort => { age => -1} );
     my $hits = $store->bag->search(query => {name => "Patrick"} , start => 0 , limit => 100);
+    my $hits = $store->bag->search(query => {name => "Patrick"} , fields => {_id => 0, name => 1});
 
     my $next_page = $hits->next_page;
     my $hits = $store->bag->search(query => '{"name":"Patrick"}' , page => $next_page);
 
     my $iterator = $store->bag->searcher(query => {name => "Patrick"});
+    my $iterator = $store->bag->searcher(query => {name => "Patrick"}, fields => {_id => 0, name => 1});
 
     # Catmandu::Store::MongoDB supports CQL...
     my $hits = $store->bag->search(cql_query => 'name any "Patrick"');
@@ -208,6 +210,12 @@ Return a L<MongoDB::Database> instance.
 =head2 drop
 
 Delete the store and all it's bags.
+
+=head1 Search
+
+Search the database: see L<Catmandu::Searchable>. This module supports an additional search parameter:
+
+    - fields => { <field> => <0|1> } : limit fields to return from a query (see L<MongoDB Tutorial|https://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/>)
 
 =head1 SEE ALSO
 

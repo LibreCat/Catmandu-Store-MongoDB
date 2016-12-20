@@ -165,11 +165,16 @@ sub search {
     my $start = $args{start};
     my $limit = $args{limit};
     my $bag   = $args{reify};
+    my $fields = $args{fields};
 
     my $cursor = $self->collection->find($query)->skip($start)->limit($limit);
     if ($bag) { # only retrieve _id
         $cursor->fields({})
     }
+    elsif ($fields) { # only retrieve specified fields
+        $cursor->fields($fields);
+    }
+
     if (my $sort =  $args{sort}) {
         $cursor->sort($sort);
     }
