@@ -353,7 +353,7 @@ more information on the CQL query language.
 
 MongoDB is not a full-text search engine. All queries will try to find exact
 matches in the database, except for the 'any' and 'all' relations which will
-translate queries into wildcard queries:
+translate queries into wildcard queries (which are slow!):
 
    title any 'funny cats'
 
