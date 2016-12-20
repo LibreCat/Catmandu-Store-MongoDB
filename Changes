@@ -1,6 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - CQL support
+  - new fields option
 
 0.0403  2016-01-12 10:36:31 CET
   - drop support
