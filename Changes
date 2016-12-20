@@ -1,6 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+
+0.05  2016-12-20 11:03:10 CET
   - CQL support
   - new fields option
 
