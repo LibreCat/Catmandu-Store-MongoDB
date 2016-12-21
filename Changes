@@ -1,6 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+
+0.0501  2016-12-21 08:23:49 CET
   - add missing dependency
 
 0.05  2016-12-20 11:03:10 CET
