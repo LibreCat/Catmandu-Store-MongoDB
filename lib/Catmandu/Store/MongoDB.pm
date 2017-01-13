@@ -11,25 +11,6 @@ use namespace::clean;
 
 with 'Catmandu::Store';
 
-my $CLIENT_ARGS = [qw(
-    connect_timeout_ms
-    db_name
-    dt_type
-    find_master
-    host
-    j
-    password
-    socket_timeout_ms
-    ssl
-    username
-    w
-    wtimeout
-)];
-
-# deprecated. remove this attribute in a future version
-has connect_retry => ( is => 'ro' );
-# deprecated. remove this attribute in a future version
-has connect_retry_sleep => ( is => 'ro' );
 has client        => (is => 'ro', lazy => 1, builder => '_build_client');
 has database_name => (is => 'ro', required => 1);
 has database      => (is => 'ro', lazy => 1, builder => '_build_database');
@@ -54,15 +35,12 @@ sub _build_database {
 sub BUILD {
     my ($self, $args) = @_;
 
-    if ($self->{connect_retry} || $self->{connect_retry_sleep}) {
-        warnings::warnif("deprecated",
-            "Connection parameter \'connect_retry\' and \'connect_retry_sleep\' are deprecated and will be removed in future versions of Catmandu::Store::MongoDB"
-        );
-    }
-
     $self->{_args} = {};
-    for my $key (@$CLIENT_ARGS) {
-        $self->{_args}{$key} = $args->{$key} if exists $args->{$key};
+    for my $key (keys %$args) {
+        next if $key eq 'client';
+        next if $key eq 'database_name';
+        next if $key eq 'database';
+        $self->{_args}{$key} = $args->{$key};
     }
 }
 
@@ -129,13 +107,6 @@ Catmandu::Store::MongoDB - A searchable store backed by MongoDB
 A Catmandu::Store::MongoDB is a Perl package that can store data into
 L<MongoDB> databases. The database as a whole is called a 'store'.
 Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
-
-=head1 DEPRECATION NOTICE
-
-The following connection parameters are depreacted and will be removed in a future version of this module:
-
-    - connect_retry
-    - connect_retry_sleep
 
 =head1 METHODS
 

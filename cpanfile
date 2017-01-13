@@ -8,9 +8,9 @@ on 'test', sub {
   requires 'Software::License','0.103010';
 };
 
-requires 'Catmandu', '0.9205';
+requires 'Catmandu', '1.02';
 requires 'CQL::Parser', '1.12';
-requires 'JSON::MaybeXS', '1.003005';
-requires 'MongoDB', '1.0.0';
+requires 'Cpanel::JSON::XS', '3.0213';
+requires 'MongoDB', '1.6.1';
 requires 'Moo','1.006000';
 requires 'namespace::clean', '0.24';

@@ -52,13 +52,6 @@ A Catmandu::Store::MongoDB is a Perl package that can store data into
 [MongoDB](https://metacpan.org/pod/MongoDB) databases. The database as a whole is called a 'store'.
 Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
 
-# DEPRECATION NOTICE
-
-The following connection parameters are depreacted and will be removed in a future version of this module:
-
-    - connect_retry
-    - connect_retry_sleep
-
 # METHODS
 
 ## new(database\_name => $name, %connectio\_opts)

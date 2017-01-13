@@ -21,7 +21,5 @@ my $store = Catmandu->store(
 );
 
 dies_ok { $store->first } 'expecting to die';
-throws_ok { $store->first } 'MongoDB::SelectionError',
-    'expecting to throw a MongoDB::SelectionError';
 
 done_testing;

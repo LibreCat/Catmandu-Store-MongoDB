@@ -7,7 +7,7 @@ our $VERSION = '0.0501';
 use Catmandu::Util qw(:is);
 use Catmandu::Store::MongoDB::Searcher;
 use Catmandu::Hits;
-use JSON::MaybeXS qw(decode_json);
+use Cpanel::JSON::XS qw(decode_json);
 use Moo;
 use Data::Dumper;
 use Catmandu::Store::MongoDB::CQL;
@@ -60,7 +60,7 @@ sub each {
 }
 
 sub count {
-    $_[0]->collection->count;
+    $_[0]->collection->count({});
 }
 
 # efficiently handle:
@@ -140,22 +140,22 @@ sub get {
 
 sub add {
     my ($self, $data) = @_;
-    $self->collection->save($data, {safe => 1});
+    $self->collection->replace_one($data, {upsert => 1});
 }
 
 sub delete {
     my ($self, $id) = @_;
-    $self->collection->remove({_id => $id}, {safe => 1});
+    $self->collection->delete_one({_id => $id});
 }
 
 sub delete_all {
     my ($self) = @_;
-    $self->collection->remove({}, {safe => 1});
+    $self->collection->delete_many({});
 }
 
 sub delete_by_query {
     my ($self, %args) = @_;
-    $self->collection->remove($args{query}, {safe => 1});
+    $self->collection->delete_many($args{query});
 }
 
 sub search {
@@ -187,7 +187,7 @@ sub search {
     Catmandu::Hits->new({
         start => $start,
         limit => $limit,
-        total => $cursor->count,
+        total => $self->collection->count($query),
         hits  => \@hits,
     });
 }
