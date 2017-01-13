@@ -1,6 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+
+0.06  2017-01-13 14:02:30 CET
   - remove deprecated options
   - replace deprecated driver method calls
 
