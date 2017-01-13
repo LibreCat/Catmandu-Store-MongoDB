@@ -140,7 +140,7 @@ sub get {
 
 sub add {
     my ($self, $data) = @_;
-    $self->collection->replace_one($data, {upsert => 1});
+    $self->collection->replace_one({_id => $data->{_id}}, $data, {upsert => 1});
 }
 
 sub delete {
