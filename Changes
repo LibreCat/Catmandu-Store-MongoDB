@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - use the new Catmandu::CQLSearchable role
 
 0.06  2017-01-13 14:02:30 CET
   - remove deprecated options
