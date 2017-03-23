@@ -2,7 +2,7 @@ package Catmandu::Store::MongoDB::Searcher;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use Moo;
 use namespace::clean;
