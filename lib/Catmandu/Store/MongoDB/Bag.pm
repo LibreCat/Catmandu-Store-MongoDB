@@ -14,7 +14,7 @@ use Catmandu::Store::MongoDB::CQL;
 use namespace::clean;
 
 with 'Catmandu::Bag';
-with 'Catmandu::Searchable';
+with 'Catmandu::CQLSearchable';
 
 has collection => (
     is => 'ro',
