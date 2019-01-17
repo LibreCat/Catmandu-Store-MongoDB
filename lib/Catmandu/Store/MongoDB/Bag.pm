@@ -187,7 +187,7 @@ sub search {
     Catmandu::Hits->new({
         start => $start,
         limit => $limit,
-        total => $self->collection->count($query),
+        total => $self->collection->count_documents($query),
         hits  => \@hits,
     });
 }
