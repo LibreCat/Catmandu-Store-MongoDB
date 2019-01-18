@@ -50,7 +50,7 @@ sub slice { # TODO constrain total?
 
 sub count { # TODO constrain on start, total?
     my ($self) = @_;
-    $self->bag->collection->count($self->query);
+    $self->bag->collection->count_documents($self->query);
 }
 
 1;

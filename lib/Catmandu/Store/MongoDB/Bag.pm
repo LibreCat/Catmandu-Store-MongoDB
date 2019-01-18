@@ -60,7 +60,7 @@ sub each {
 }
 
 sub count {
-    $_[0]->collection->count({});
+    $_[0]->collection->count_documents({});
 }
 
 # efficiently handle:
