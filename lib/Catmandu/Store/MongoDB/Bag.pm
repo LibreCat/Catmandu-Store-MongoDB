@@ -2,7 +2,7 @@ package Catmandu::Store::MongoDB::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.07';
+our $VERSION = '0.0701';
 
 use Catmandu::Util qw(:is);
 use Catmandu::Store::MongoDB::Searcher;
