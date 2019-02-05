@@ -14,3 +14,4 @@ MYMETA.*
 Catmandu-Store-MongoDB-*
 local
 cpanfile.snapshot
+.tidyall.d

@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - support for MongoDB 4.0 transactions
 
 0.0701  2019-01-18 15:04:24 CET
   - use count_documents instead of deprecated count method
