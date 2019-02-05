@@ -54,7 +54,7 @@ Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
 
 # METHODS
 
-## new(database\_name => $name, %connectio\_opts)
+## new(database\_name => $name, %connection\_opts)
 
 ## new(database\_name => $name , bags => { data => { cql\_mapping => $cql\_mapping } })
 
@@ -126,15 +126,26 @@ Return a [MongoDB::Database](https://metacpan.org/pod/MongoDB::Database) instanc
 
 Delete the store and all it's bags.
 
+## transaction(\\&sub)
+
+Execute `$sub` within a transaction. See [Catmandu::Transactional](https://metacpan.org/pod/Catmandu::Transactional).
+
+Note that only MongoDB databases with feature compatibility >= 4.0 and in a
+replica set have support for transactions.  See
+[https://docs.mongodb.com/manual/reference/command/setFeatureCompatibilityVersion/#view-fcv](https://docs.mongodb.com/manual/reference/command/setFeatureCompatibilityVersion/#view-fcv)
+and
+[https://docs.mongodb.com/manual/tutorial/convert-standalone-to-replica-set/](https://docs.mongodb.com/manual/tutorial/convert-standalone-to-replica-set/)
+for more info.
+
 # Search
 
-Search the database: see [Catmandu::Searchable](https://metacpan.org/pod/Catmandu::Searchable). This module supports an additional search parameter:
+Search the database: see [Catmandu::Searchable](https://metacpan.org/pod/Catmandu::Searchable) and  [Catmandu::CQLSearchable](https://metacpan.org/pod/Catmandu::CQLSearchable). This module supports an additional search parameter:
 
     - fields => { <field> => <0|1> } : limit fields to return from a query (see L<MongoDB Tutorial|https://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/>)
 
 # SEE ALSO
 
-[Catmandu::Bag](https://metacpan.org/pod/Catmandu::Bag), [Catmandu::Searchable](https://metacpan.org/pod/Catmandu::Searchable) , [MongoDB::MongoClient](https://metacpan.org/pod/MongoDB::MongoClient)
+[Catmandu::Bag](https://metacpan.org/pod/Catmandu::Bag), [Catmandu::CQLSearchable](https://metacpan.org/pod/Catmandu::CQLSearchable), [Catmandu::Droppable](https://metacpan.org/pod/Catmandu::Droppable), [Catmandu::Transactional](https://metacpan.org/pod/Catmandu::Transactional), [MongoDB::MongoClient](https://metacpan.org/pod/MongoDB::MongoClient)
 
 # AUTHOR
 
