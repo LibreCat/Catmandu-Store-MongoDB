@@ -66,11 +66,11 @@ sub transaction {
 
         @res = $sub->();
 
-    COMMIT: {
+        COMMIT: {
             eval {
                 $session->commit_transaction;
                 1;
-            } or do {
+            } // do {
                 my $err = $@;
                 if ($err->has_error_label("UnknownTransactionCommitResult")) {
                     redo COMMIT;
@@ -84,14 +84,14 @@ sub transaction {
         $self->clear_session;
 
         1;
-    } or do {
+    } // do {
         my $err = $@;
         $session->abort_transaction;
         $self->clear_session;
         die $err;
     };
 
-    @res;
+    wantarray ? @res : $res[0];
 }
 
 1;
