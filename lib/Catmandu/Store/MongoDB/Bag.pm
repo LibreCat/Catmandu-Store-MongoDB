@@ -174,7 +174,7 @@ sub pluck {
 
 sub get {
     my ($self, $id) = @_;
-    $self->collection->find_one({_id => $id}, $self->_options);
+    $self->collection->find_one({_id => $id}, {}, $self->_options);
 }
 
 sub add {
