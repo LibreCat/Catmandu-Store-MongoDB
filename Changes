@@ -1,6 +1,8 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+
+0.0802  2019-02-08 16:16:42 CET
   - transaction method is now list/scalar context aware
 
 0.0801  2019-02-08 14:01:49 CET
