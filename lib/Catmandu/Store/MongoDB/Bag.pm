@@ -302,6 +302,14 @@ sub normalize_query {
     decode_json($query);
 }
 
+# assume a sort option is a JSON encoded MongoDB sort specification
+sub normalize_sort {
+    my ($self, $sort) = @_;
+    return $sort if ref $sort;
+    return {} if !$sort;
+    decode_json($sort);
+}
+
 sub drop {
     $_[0]->collection->drop;
 }
