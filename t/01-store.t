@@ -42,6 +42,21 @@ is $store->bag->search( sort => '{"name":-1}' )->first->{name}, 'Patrick';
 # MongoDB sort specification as hash ref
 is $store->bag->search( sort => { name => 1 } )->first->{name}, 'Nicolas';
 
+# create CQL mapping and query
+my $mongo_query = Catmandu::Store::MongoDB::CQL->new(
+    mapping => {
+        "indexes" => {
+            "id" => {
+                "field" => "_id",
+                "op" => { "all" => 'true', "any" => 'true', ">" => 'true', }
+            },
+        },
+        "default_index" => "all"
+    }
+)->parse('id > 200');
+# run query
+is $store->bag->search( query => $mongo_query )->total, 1;
+
 $store->bag->delete('123');
 
 is $store->bag->count, 1;

@@ -133,9 +133,6 @@ sub visit {
         my $unmasked
             = array_includes([map {$_->[1]} @modifiers], "cql.unmasked");
 
-        # trick to force numeric values interpreted as integers
-        $term = $term + 0 if ($term =~ /^[1-9]\d*$/);
-
         if ($base eq '=' or $base eq 'scr') {
             unless ($unmasked) {
                 $term
