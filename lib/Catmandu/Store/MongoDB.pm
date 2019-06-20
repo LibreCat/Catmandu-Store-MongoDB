@@ -110,6 +110,7 @@ Catmandu::Store::MongoDB - A searchable store backed by MongoDB
     $ catmandu import -v JSON --multiline 1 to MongoDB --database_name bibliography --bag books < books.json
     $ catmandu export MongoDB --database_name bibliography --bag books to YAML
     $ catmandu count MongoDB --database_name bibliography --bag books --query '{"PublicationYear": "1937"}'
+    $ catmandu count MongoDB --database_name bibliography --bag books --query '{"Author": "Jones"}' --sort '{"PublicationYear":1}'
 
     # In perl
     use Catmandu::Store::MongoDB;
