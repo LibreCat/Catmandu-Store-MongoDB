@@ -36,6 +36,12 @@ is $store->bag->count, 2;
 
 is $store->bag->search(query => '{"name":"Nicolas"}')->total, 1;
 
+# limit 0 == unlimited in MongoDB, we correct for this
+my $hits = $store->bag->search(query => '{"name":"Nicolas"}', limit => 0);
+is $hits->total, 1;
+is $hits->limit, 0;
+is_deeply $hits->hits, [];
+
 # MongoDB sort specification as JSON
 is $store->bag->search(sort => '{"name":-1}')->first->{name}, 'Patrick';
 

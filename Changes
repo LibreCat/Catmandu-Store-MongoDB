@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - fix search(limit => 0) corner case
 
 0.0804  2021-04-22 17:11:31 CEST
   - support estimated_document_count with store estimate_count option

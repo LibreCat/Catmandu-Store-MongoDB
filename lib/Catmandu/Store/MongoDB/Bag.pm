@@ -210,6 +210,12 @@ sub search {
     my $bag    = $args{reify};
     my $fields = $args{fields};
 
+    # limit 0 == all in mongodb
+    my $orig_limit = $limit;
+    if ($orig_limit == 0) {
+        $limit = 1;
+    }
+
     my $cursor = $self->_cursor($query)->skip($start)->limit($limit);
     if ($bag) {    # only retrieve _id
         $cursor->fields({});
@@ -223,6 +229,11 @@ sub search {
     }
 
     my @hits = $cursor->all;
+
+    if ($orig_limit == 0) {
+        @hits = ();
+    }
+
     if ($bag) {
         @hits = map {$bag->get($_->{_id})} @hits;
     }
@@ -230,7 +241,7 @@ sub search {
     Catmandu::Hits->new(
         {
             start => $start,
-            limit => $limit,
+            limit => $orig_limit,
             total =>
                 $self->collection->count_documents($query, $self->_options),
             hits => \@hits,
