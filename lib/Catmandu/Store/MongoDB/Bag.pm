@@ -73,6 +73,9 @@ sub each {
 
 sub count {
     my ($self) = @_;
+    if ($self->store->estimate_count) {
+        return $self->collection->estimated_document_count();
+    }
     $self->collection->count_documents({}, $self->_options);
 }
 
@@ -260,7 +263,7 @@ sub translate_sru_sortkeys {
 sub _translate_sru_sortkey {
     my ($self, $sortkey) = @_;
     my ($field, $schema, $asc) = split /,/, $sortkey;
-    $field || return;
+    $field                              || return;
     ($asc && ($asc == 1 || $asc == -1)) || return;
     if (my $map = $self->cql_mapping) {
         $field = lc $field;
@@ -298,7 +301,7 @@ sub translate_cql_query {
 sub normalize_query {
     my ($self, $query) = @_;
     return $query if ref $query;
-    return {} if !$query;
+    return {}     if !$query;
     decode_json($query);
 }
 
@@ -306,7 +309,7 @@ sub normalize_query {
 sub normalize_sort {
     my ($self, $sort) = @_;
     return $sort if ref $sort;
-    return {} if !$sort;
+    return {}    if !$sort;
     decode_json($sort);
 }
 

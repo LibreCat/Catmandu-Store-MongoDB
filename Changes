@@ -1,6 +1,7 @@
 Revision history for Catmandu-Store-MongoDB
 
 {{$NEXT}}
+  - support estimated_document_count with store estimate_count option
 
 0.0803  2019-06-18 09:54:21 CEST
   - support json encoded sort specification
