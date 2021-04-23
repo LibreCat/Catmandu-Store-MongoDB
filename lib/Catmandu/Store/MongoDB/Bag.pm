@@ -238,6 +238,15 @@ sub search {
         @hits = map {$bag->get($_->{_id})} @hits;
     }
 
+    my $total;
+
+    if (!($query && scalar(keys %$query) > 0) && $self->store->estimate_count) {
+        $total = $self->collection->estimated_document_count();
+    }
+    else {
+        $total = $self->collection->count_documents($query, $self->_options);
+    }
+
     Catmandu::Hits->new(
         {
             start => $start,
