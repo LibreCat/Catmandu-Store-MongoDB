@@ -251,8 +251,7 @@ sub search {
         {
             start => $start,
             limit => $orig_limit,
-            total =>
-                $self->collection->count_documents($query, $self->_options),
+            total => $total,
             hits => \@hits,
         }
     );
