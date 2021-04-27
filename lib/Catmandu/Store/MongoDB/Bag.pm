@@ -240,7 +240,8 @@ sub search {
 
     my $total;
 
-    if (!($query && scalar(keys %$query) > 0) && $self->store->estimate_count) {
+    if (!($query && scalar(keys %$query) > 0) && $self->store->estimate_count)
+    {
         $total = $self->collection->estimated_document_count();
     }
     else {
@@ -252,7 +253,7 @@ sub search {
             start => $start,
             limit => $orig_limit,
             total => $total,
-            hits => \@hits,
+            hits  => \@hits,
         }
     );
 }

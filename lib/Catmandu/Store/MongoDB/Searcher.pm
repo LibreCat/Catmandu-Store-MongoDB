@@ -51,7 +51,9 @@ sub slice {    # TODO constrain total?
 sub count {    # TODO constrain on start, total?
     my ($self) = @_;
     my $query = $self->query;
-    if (!($query && scalar(keys %$query) > 0) && $self->bag->store->estimate_count) {
+    if (!($query && scalar(keys %$query) > 0)
+        && $self->bag->store->estimate_count)
+    {
         return $self->collection->estimated_document_count();
     }
     $self->bag->collection->count_documents($self->query,
