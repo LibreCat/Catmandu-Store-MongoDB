@@ -26,6 +26,7 @@ sub generator {
 
             # limit is unused because the perl driver doesn't expose batchSize
             $c->limit($self->total) if defined $self->total;
+            $c->skip($self->start) if defined $self->start;
             $c->sort($self->sort)   if defined $self->sort;
             $c->immortal(1);
             $c;
