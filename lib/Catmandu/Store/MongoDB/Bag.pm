@@ -175,6 +175,29 @@ sub pluck {
     );
 }
 
+sub slice {
+    my($self, $start, $limit) = @_;
+
+    $start //= 0;
+
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                # limit 0 == all in mongodb
+                return if defined($limit) && $limit <= 0;
+
+                state $cursor = do {
+                    my $c =  $self->_cursor({});
+                    $c->skip($start);
+                    $c->limit($limit) if defined $limit;
+                    $c;
+                };
+                $cursor->next;
+            }
+        }
+    );
+}
+
 sub get {
     my ($self, $id) = @_;
     $self->collection->find_one({_id => $id}, {}, $self->_options);

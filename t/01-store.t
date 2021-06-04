@@ -66,6 +66,10 @@ is_deeply $store->bag->searcher(
 is_deeply $store->bag->search(query => {char => "ABC"}, fields => {_id => 1})
     ->first, {_id => '789'};
 
+is_deeply $store->bag->slice(0)->to_array(), [{_id => '789', char => 'ABC', num => '123'}];
+is_deeply $store->bag->slice(1)->to_array(), [];
+is_deeply $store->bag->slice(0,0)->to_array(), [];
+
 END {
     if ($db) {
         $db->drop;
